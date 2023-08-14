@@ -5,6 +5,10 @@ services:
     restart: always
     volumes:
       - "${THRDS_REPO}/threaddb:/data/threaddb"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     environment:
       - THRDS_REPO
       - THRDS_HOSTADDR
@@ -29,6 +33,10 @@ services:
     restart: always
     volumes:
       - "${THRDS_REPO}/mongodb:/data/mongodb"
+    deploy:
+      resources:
+        limits:
+          memory: 2048M
     ports:
       - "127.0.0.1:27017:27017"
     command:
@@ -36,5 +44,5 @@ services:
       - -c
       - |
         /usr/bin/mongod --fork --logpath /var/log/mongod.log --bind_ip_all --replSet rs0
-        mongo --eval 'rs.initiate({_id: "rs0", version: 1, members: [{ _id: 0, host: "mongo:27017" }]})'
+        mongosh --eval 'rs.initiate({_id: "rs0", version: 1, members: [{ _id: 0, host: "mongo:27017" }]})'
         tail -f /var/log/mongod.log
